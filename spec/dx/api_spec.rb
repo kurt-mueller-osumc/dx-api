@@ -1,9 +1,5 @@
-RSpec.describe Dx::Api do
+RSpec.describe DX::Api do
   it "has a version number" do
-    expect(Dx::Api::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
+    expect(DX::Api::VERSION).to_not be nil
   end
 end
