@@ -1,4 +1,4 @@
-require_relative 'lib/dx/api/version'
+require_relative "lib/dx/api/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "dx-api"
@@ -26,4 +26,6 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "pry"
 end
