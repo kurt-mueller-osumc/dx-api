@@ -18,14 +18,10 @@ module DX
       # @param project_id [String] The full id of the project
       # @return [Hash] A hash that contains the response code and json-parsed body
       def self.describe(api_token:, project_id:)
-        uri = [DX::Api::HOST_NAME, project_id, 'describe'].join('/').then { |url| URI(url) }
-
-        Net::HTTP.post(
-          uri,
-          {}.to_json,
-          'Content-Type' => 'application/json',
-          'Authorization' => "Bearer #{api_token}"
-        ).then do |resp|
+        DX::Api::Request.new(
+          api_token: api_token,
+          path: [project_id, 'describe'].join('/')
+        ).make.then do |resp|
           {
             code: resp.code.to_i,
             body: resp.body.then(&JSON.method(:parse))
@@ -47,18 +43,15 @@ module DX
       # @param summary [String] The project summary
       # @return [Hash] A hash that contains the response code and the id of created project
       def self.create(api_token:, name:, summary:)
-        uri = [DX::Api::HOST_NAME, 'project', 'new'].join('/').then { |url| URI(url) }
-
-        Net::HTTP.post(
-          uri,
-          {
+        DX::Api::Request.new(
+          api_token: api_token,
+          path: %w[project new].join('/'),
+          body: {
             name: name,
             summary: summary,
             description: summary
-          }.to_json,
-          'Content-Type' => 'application/json',
-          'Authorization' => "Bearer #{api_token}"
-        ).then do |resp|
+          }
+        ).make.then do |resp|
           {
             code: resp.code.to_i,
             body: resp.body.then(&JSON.method(:parse))
