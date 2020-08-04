@@ -1,6 +1,6 @@
 # DX::Api
 
-A RubyGem to access the DNAnexus API.
+A ruby client to access the DNAnexus API.
 
 ## Installation
 
