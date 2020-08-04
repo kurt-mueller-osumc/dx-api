@@ -1,5 +1,6 @@
-require_relative 'api/version'
-require_relative 'api/project'
+require 'dx/api/version'
+require 'dx/api/project'
+require 'dx/api/request'
 
 module DX
   module Api
