@@ -1,9 +1,9 @@
-require_relative "api/version"
-require_relative "api/project"
+require_relative 'api/version'
+require_relative 'api/project'
 
 module DX
   module Api
-    HOST_NAME = "https://api.dnanexus.com"
+    HOST_NAME = 'https://api.dnanexus.com'.freeze
 
     class Error < StandardError; end
     # Your code goes here...

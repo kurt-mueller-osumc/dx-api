@@ -1,0 +1,5 @@
+require:
+  - rubocop-performance
+  - rubocop-rspec
+  - rubocop/require_tools
+  - rubocop-packaging
