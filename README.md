@@ -12,15 +12,24 @@ gem 'dx-api'
 
 And then execute:
 
-    $ bundle install
+```bash
+bundle install
+```
 
 Or install it yourself as:
 
-    $ gem install dx-api
+```bash
+gem install dx-api
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+DX::Api::Search.find_data_objects(
+  api_token: YOUR_API_TOKEN,
+  project_id: "project-1234",
+)
+```
 
 ## Development
 
