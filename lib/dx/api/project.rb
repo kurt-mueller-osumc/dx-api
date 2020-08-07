@@ -1,6 +1,3 @@
-require 'net/http'
-require 'json'
-
 module DX
   module Api
     # Access the DNAnexus project api.
@@ -16,17 +13,12 @@ module DX
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
-      # @return [Hash] A hash that contains the response code and json-parsed body
+      # @return [DX::Api::Response] A response object that contains the response code and json-parsed body
       def self.describe(api_token:, project_id:)
         DX::Api::Request.new(
           api_token: api_token,
           path: [project_id, 'describe'].join('/')
-        ).make.then do |resp|
-          {
-            code: resp.code.to_i,
-            body: resp.body.then(&JSON.method(:parse))
-          }
-        end
+        ).make.then(&DX::Api::Response.method(:from_http))
       end
 
       # Create a new project
@@ -51,12 +43,7 @@ module DX
             summary: summary,
             description: summary
           }
-        ).make.then do |resp|
-          {
-            code: resp.code.to_i,
-            body: resp.body.then(&JSON.method(:parse))
-          }
-        end
+        ).make.then(&DX::Api::Response.method(:from_http))
       end
     end
   end

@@ -1,6 +1,7 @@
 require 'dx/api/version'
 require 'dx/api/project'
 require 'dx/api/request'
+require 'dx/api/response'
 
 module DX
   module Api
