@@ -3,3 +3,7 @@ require:
   - rubocop-rspec
   - rubocop/require_tools
   - rubocop-packaging
+
+Layout/FirstHashElementIndentation:
+  Exclude:
+    - 'lib/dx/api/search.rb'
