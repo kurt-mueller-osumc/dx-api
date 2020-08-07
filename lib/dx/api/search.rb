@@ -19,6 +19,33 @@ module DX
         ).make.then(&::DX::Api::Response.method(:from_http))
       end
 
+      # Searches for all data objects within a project. If the respone indicates another pages exists,
+      # it queries for the next page of data objects.
+      def self.find_all_data_objects(api_token:, project_id:, starting_at: nil, &block)
+        query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at)
+
+        DX::Api::Request.new(
+          api_token: api_token,
+          path: %w[system findDataObjects].join('/'),
+          body: query.to_h
+        ).make.then(&::DX::Api::Response.method(:from_http))
+        .then do |dx_response|
+          next_page = dx_response.body.fetch("next")
+          results = dx_response.body.fetch("results")
+
+          block.call(results) unless block.nil?
+
+          if next_page.nil?
+            results
+          else
+            next_id = next_page.fetch("id")
+            results.concat(
+              find_all_data_objects(api_token: api_token, project_id: project_id, starting_at: next_id, &block)
+            )
+          end
+        end
+      end
+
       # Helper class to create data object queries.
       class DataObjectsQuery
         attr_reader :project_id,
