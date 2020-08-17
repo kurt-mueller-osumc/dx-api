@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     dx-api (0.4.0)
-      pry
 
 GEM
   remote: https://rubygems.org/
@@ -61,6 +60,7 @@ PLATFORMS
 
 DEPENDENCIES
   dx-api!
+  pry
   rake (~> 12.0)
   rspec (~> 3.0)
   rubocop
