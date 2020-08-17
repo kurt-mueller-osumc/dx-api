@@ -35,7 +35,18 @@ DX::Api::Search.find_data_objects(
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+## Publishing
+
+This gem is published to the [ASTOR-OSTOR private github registry](https://github.com/astor-ostor). Before you publishing to the registry, authenticate with the [Github Packages service](https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-rubygems-for-use-with-github-packages#authenticating-to-github-packages).
+
+After that, follow these steps:
+
+```bash
+bundle exec rake release
+
+# replace 0.1.0 with the current version of the gem
+gem push --key github --host https://rubygems.pkg.github.com/astor-ostor dx-api-0.1.0.gem
+```
 
 ## Contributing
 
