@@ -6,10 +6,10 @@ module DX
       # Describe the specified project
       # https://documentation.dnanexus.com/developer/api/data-containers/projects#api-method-project-xxxx-describe
       #
-      # DX::Api::Project.describe(
-      #   api_token: "api_token",
-      #   project_id:"project-1234"
-      # )
+      #    DX::Api::Project.describe(
+      #      api_token: "api_token",
+      #      project_id:"project-1234"
+      #    )
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
@@ -24,11 +24,11 @@ module DX
       # Create a new project
       # https://documentation.dnanexus.com/developer/api/data-containers/projects#api-method-project-new
       #
-      # DX::Api::Project.create(
-      #   api_token: "api_token",
-      #   name: "Project name",
-      #   summary: "Project summary"
-      # )
+      #    DX::Api::Project.create(
+      #      api_token: "api_token",
+      #      name: "Project name",
+      #      summary: "Project summary"
+      #    )
       #
       # @param api_token [String] Your DNAnexus api token
       # @param name [String] The project name

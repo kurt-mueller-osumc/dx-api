@@ -29,7 +29,7 @@ module DX
 
       # Convert the DNAnexus API request to a Net::HTTP request
       #
-      # @returns [Net::HTTP::Post] A POST request to be made to the DX api
+      # @return [Net::HTTP::Post] A POST request to be made to the DX api
       def to_http
         Net::HTTP::Post.new(uri).tap do |req|
           req['Content-Type']  = 'application/json'

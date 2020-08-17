@@ -5,15 +5,15 @@ module DX
       # Searches for data objects satisfying particular constraints
       # https://documentation.dnanexus.com/developer/api/search#api-method-system-finddataobjects
       #
-      # DX::Api::Search.find_data_objects(
-      #   api_token: YOUR_API_TOKEN,
-      #   project_id: "project-1234"
-      # )
+      #    DX::Api::Search.find_data_objects(
+      #      api_token: YOUR_API_TOKEN,
+      #      project_id: "project-1234"
+      #    )
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
       # @param starting_at [String/NilClass] The object id to start at (optional)
-      # @returns [DX::Api::Response] The response from the api
+      # @return [DX::Api::Response] The response from the api
       def self.find_data_objects(api_token:, project_id:, starting_at: nil)
         query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at)
 
@@ -28,17 +28,17 @@ module DX
       # it queries for the next page of data objects. If you pass in a block, you'll be able to work with
       # intermediatery results.
       #
-      # DX::Api::Search.find_all_data_objects(
-      #   api_token: YOUR_API_TOKEN,
-      #   project_id: "project-1234"
-      # ) do |results|
-      #   pp results
-      # end
+      #    DX::Api::Search.find_all_data_objects(
+      #      api_token: YOUR_API_TOKEN,
+      #      project_id: "project-1234"
+      #    ) do |results|
+      #      pp results
+      #    end
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
       # @param starting_at [String/NilClass] The object id to start at (optional)
-      # @returns [Array<Hash>] All the data objects in the project.
+      # @return [Array<Hash>] All the data objects in the project.
       def self.find_all_data_objects(api_token:, project_id:, starting_at: nil, &block)
         query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at)
 
@@ -68,17 +68,17 @@ module DX
       # it queries for the next page of data objects. If you pass in a block, you can work with
       # intermediatery results.
       #
-      # DX::Api::Search.find_all_files(
-      #   api_token: YOUR_API_TOKEN,
-      #   project_id: "project-1234"
-      # ) do |results|
-      #   pp results
-      # end
+      #    DX::Api::Search.find_all_files(
+      #      api_token: YOUR_API_TOKEN,
+      #      project_id: "project-1234"
+      #    ) do |results|
+      #      pp results
+      #    end
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
       # @param starting_at [String/NilClass] The object id to start at (optional)
-      # @returns [Array<Hash>] All the data objects in the project.
+      # @return [Array<Hash>] All the data objects in the project.
       def self.find_all_files(api_token:, project_id:, starting_at: nil, &block)
         query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at, entity_type: "file")
 
