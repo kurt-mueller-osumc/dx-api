@@ -33,15 +33,17 @@ module DX
       # @param api_token [String] Your DNAnexus api token
       # @param name [String] The project name
       # @param summary [String] The project summary
-      # @return [Hash] A hash that contains the response code and the id of created project
-      def self.create(api_token:, name:, summary:)
+      # @param bill_to [String] The entity id which any costs associated with this project will be billed
+      # @return [DX::Api::Response] A response object whose body will contain the project's id.
+      def self.create(api_token:, name:, summary:, bill_to:)
         DX::Api::Request.new(
           api_token: api_token,
           path: %w[project new].join('/'),
           body: {
             name: name,
             summary: summary,
-            description: summary
+            description: summary,
+            billTo: bill_to
           }
         ).make.then(&DX::Api::Response.method(:from_http))
       end
