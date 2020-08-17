@@ -42,7 +42,7 @@ This gem is published to the [ASTOR-OSTOR private github registry](https://githu
 After that, follow these steps:
 
 ```bash
-bundle exec rake release
+bundle exec rake build
 
 # replace 0.1.0 with the current version of the gem
 gem push --key github --host https://rubygems.pkg.github.com/astor-ostor pkg/dx-api-0.1.0.gem
