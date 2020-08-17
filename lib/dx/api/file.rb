@@ -2,6 +2,7 @@ module DX
   module Api
     module File
       # Clone a file, based on its id, from a source container (e.g. a source project) to a folder path in a destination container (e.g. a destination project)
+      # https://documentation.dnanexus.com/developer/api/data-containers/cloning#api-method-class-xxxx-clone
       #
       #    DX::Api::File.clone(
       #      api_token: "API_TOKEN",
