@@ -10,5 +10,9 @@ require 'dx/api'
 # require "pry"
 # Pry.start
 
-require 'irb'
-IRB.start(__FILE__)
+# require 'irb'
+# IRB.start(__FILE__)
+
+# use pry instead
+require 'pry'
+Pry.start
