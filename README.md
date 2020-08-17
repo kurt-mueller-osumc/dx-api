@@ -45,7 +45,7 @@ After that, follow these steps:
 bundle exec rake release
 
 # replace 0.1.0 with the current version of the gem
-gem push --key github --host https://rubygems.pkg.github.com/astor-ostor dx-api-0.1.0.gem
+gem push --key github --host https://rubygems.pkg.github.com/astor-ostor pkg/dx-api-0.1.0.gem
 ```
 
 ## Contributing
