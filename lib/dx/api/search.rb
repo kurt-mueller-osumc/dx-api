@@ -89,7 +89,7 @@ module DX
           next_page = dx_response.body.fetch('next')
           results = dx_response.body.fetch('results')
 
-          block&.call(results)
+          block.call(results) unless block.nil?
 
           if next_page.nil?
             results
