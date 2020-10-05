@@ -18,7 +18,7 @@ module DX
       # @param destination_id [String] The id of the destination container
       # @param folder_path [String] The folder path to copy the file to
       # @return [DX::Api::Response] A dx response whose body contains the ids of the source container, destination container, as well as an array of objects tha tcould not be cloned since they already exist in the container
-      def self.clone(api_token:, file_id:, source_id:, destination_id:, folder_path:) 
+      def self.clone(api_token:, file_id:, source_id:, destination_id:, folder_path:)
         DX::Api::Request.new(
           api_token: api_token,
           path: [source_id, 'clone'].join('/'), # e.g. project-1234/clone

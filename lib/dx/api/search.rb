@@ -46,17 +46,16 @@ module DX
           api_token: api_token,
           path: %w[system findDataObjects].join('/'),
           body: query.to_h
-        ).make.then(&::DX::Api::Response.method(:from_http))
-        .then do |dx_response|
-          next_page = dx_response.body.fetch("next")
-          results = dx_response.body.fetch("results")
+        ).make.then(&::DX::Api::Response.method(:from_http)).then do |dx_response|
+          next_page = dx_response.body.fetch('next')
+          results   = dx_response.body.fetch('results')
 
           block.call(results) unless block.nil?
 
           if next_page.nil?
             results
           else
-            next_id = next_page.fetch("id")
+            next_id = next_page.fetch('id')
             results.concat(
               find_all_data_objects(api_token: api_token, project_id: project_id, starting_at: next_id, &block)
             )
@@ -80,23 +79,23 @@ module DX
       # @param starting_at [String/NilClass] The object id to start at (optional)
       # @return [Array<Hash>] All the data objects in the project.
       def self.find_all_files(api_token:, project_id:, starting_at: nil, &block)
-        query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at, entity_type: "file")
+        query = DataObjectsQuery.new(project_id: project_id, starting_at: starting_at, entity_type: 'file')
 
         DX::Api::Request.new(
           api_token: api_token,
           path: %w[system findDataObjects].join('/'),
           body: query.to_h
         ).make.then(&::DX::Api::Response.method(:from_http))
-        .then do |dx_response|
-          next_page = dx_response.body.fetch("next")
-          results = dx_response.body.fetch("results")
+                        .then do |dx_response|
+          next_page = dx_response.body.fetch('next')
+          results = dx_response.body.fetch('results')
 
-          block.call(results) unless block.nil?
+          block&.call(results)
 
           if next_page.nil?
             results
           else
-            next_id = next_page.fetch("id")
+            next_id = next_page.fetch('id')
             results.concat(
               find_all_files(api_token: api_token, project_id: project_id, starting_at: next_id, &block)
             )
@@ -110,7 +109,7 @@ module DX
 
         attr_reader :project_id,
                     :starting_at
-        
+
         attr_accessor :entity_type
 
         def initialize(project_id:, starting_at: nil, entity_type: nil)
