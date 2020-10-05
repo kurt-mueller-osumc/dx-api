@@ -4,6 +4,9 @@ require:
   - rubocop/require_tools
   - rubocop-packaging
 
+AllCops:
+  NewCops: enable
+
 Layout/FirstHashElementIndentation:
   Exclude:
     - 'lib/dx/api/search.rb'
