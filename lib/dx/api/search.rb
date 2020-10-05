@@ -85,8 +85,7 @@ module DX
           api_token: api_token,
           path: %w[system findDataObjects].join('/'),
           body: query.to_h
-        ).make.then(&::DX::Api::Response.method(:from_http))
-                        .then do |dx_response|
+        ).make.then(&::DX::Api::Response.method(:from_http)).then do |dx_response|
           next_page = dx_response.body.fetch('next')
           results = dx_response.body.fetch('results')
 
