@@ -37,16 +37,7 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 ## Publishing
 
-This gem is published to the [ASTOR-OSTOR private github registry](https://github.com/astor-ostor). Before you publishing to the registry, authenticate with the [Github Packages service](https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-rubygems-for-use-with-github-packages#authenticating-to-github-packages).
-
-After that, follow these steps:
-
-```bash
-bundle exec rake build
-
-# replace 0.1.0 with the current version of the gem
-gem push --key github --host https://rubygems.pkg.github.com/astor-ostor pkg/dx-api-0.1.0.gem
-```
+Bump the ruby version to an appropriate number. When new code in the `lib` folder is pushed to the `main` branch, github actions will automatically build the gem and publish it to ASTOR-OSTOR's private registry.
 
 ## License
 
