@@ -71,7 +71,7 @@ module DX
       def self.invite(api_token:, id:, invitee:, level:, send_email_notification: true)
         path = [id, 'invite'].join('/')
 
-        DX::Api::Reqeust.new(
+        DX::Api::Request.new(
           api_token: api_token,
           path: path,
           body: {
