@@ -79,7 +79,7 @@ module DX
             level: level,
             suppressEmailNotification: !send_email_notification
           }
-        )
+        ).make.then(&DX::Api::Response.method(:from_http))
       end
     end
   end
