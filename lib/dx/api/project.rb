@@ -47,6 +47,40 @@ module DX
           }
         ).make.then(&DX::Api::Response.method(:from_http))
       end
+
+      # Invites a DNAnexus user or org to the project at the specified permission level. An email address
+      # can be used to specify the invitee in the case of a user invitee. If the invitee already has access
+      # to the project but at a lower permission level than the one specified, then the permission level of
+      # the invitee will be upgraded to the specified permission level.
+      #
+      # https://documentation.dnanexus.com/developer/api/data-containers/project-permissions-and-sharing#api-method-project-xxxx-invite
+      #
+      #    DX::Api::Project.invite(
+      #      api_token: 'api_token',
+      #      id: 'project-1234',
+      #      invitee: 'arthur.james@osumc.edu',
+      #      level: 'VIEWER'
+      #    )
+      #
+      # @param api_token [String] Your DNAnexus api token
+      # @param id [String] The project id
+      # @param invitee [String] An email address of a current DNAnexus user or a DNAnexus id
+      # @param level [String] A permission level; must be one of "VIEW", "UPLOAD", "CONTRIBUTE", or "ADMINISTER"
+      # @param send_email_notification [Boolean] If true, send an email notification to the invitee
+      # @return [DX::Api::Response] A response object whose body will contain the invitation status
+      def self.invite(api_token:, id:, invitee:, level:, send_email_notification: true)
+        path = [id, 'invite'].join('/')
+
+        DX::Api::Reqeust.new(
+          api_token: api_token,
+          path: path,
+          body: {
+            invitee: invitee,
+            level: level,
+            suppressEmailNotification: !send_email_notification
+          }
+        )
+      end
     end
   end
 end
