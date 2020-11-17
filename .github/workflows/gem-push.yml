@@ -1,9 +1,9 @@
-name: Ruby Gem
+name: Build & publish gem
 
 on:
   push:
     branches: [ main ]
-    paths: 
+    paths:
       - 'lib/dx/**.rb'
       - 'Gemfile.lock'
       - 'dx-api.gemspec'
