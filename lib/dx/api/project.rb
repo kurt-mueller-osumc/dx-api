@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DX
   module Api
     # Access the DNAnexus project api.
@@ -78,6 +80,39 @@ module DX
             invitee: invitee,
             level: level,
             suppressEmailNotification: !send_email_notification
+          }
+        ).make.then(&DX::Api::Response.method(:from_http))
+      end
+
+      # Clones one or more objects and/or folders from a source project into a destination project (and optionally into a destination folder).
+      #
+      # https://documentation.dnanexus.com/developer/api/data-containers/cloning#api-method-class-xxxx-clone
+      #
+      #    DX::Api::Project.clone(
+      #      api_token: 'api_token',
+      #      source_id: 'project-1234',
+      #      destination_id: 'project-5678'
+      #    )
+      #    => #<DX::Api::Response:0x00007fcef41ca898 @body={"id"=>"project-1234", "project"=>"project-5678", "exists"=>[]}, @code=200>
+      #
+      # @param api_token [String] Your DNAnexus api token
+      # @param source_id [String] The id of the source project to copy from
+      # @param destination_id [String] The id of the destination project to copy to
+      # @param source_folders [Array<String>] The source folders to copy
+      # @param destination_folder [String] The destination folder
+      # @param create_folders [Boolean] Whether the destination folder and/or parent folders should be created if they don't exist
+      # @return [DX::Api::Response] A response object whose body, if the operation is successful, will contain the source, destination project id, and a list of object IDs that could not be cloned because they already exist in the destination project.
+      def self.clone(api_token:, source_id:, destination_id:, source_folders: %w[/], destination_folder: '/', create_folders: true)
+        path = [source_id, 'clone'].join('/')
+
+        DX::Api::Request.new(
+          api_token: api_token,
+          path: path,
+          body: {
+            folders: source_folders,
+            project: destination_id,
+            destination: destination_folder,
+            parents: create_folders
           }
         ).make.then(&DX::Api::Response.method(:from_http))
       end

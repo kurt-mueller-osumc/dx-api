@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'net/http'
 require 'json'
@@ -6,7 +8,7 @@ module DX
   module Api
     # A helper class to create and make http requests to the DNAnexus API
     class Request
-      HOST_NAME = 'https://api.dnanexus.com'.freeze
+      HOST_NAME = 'https://api.dnanexus.com'
 
       extend Forwardable
 
