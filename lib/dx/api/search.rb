@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DX
   module Api
     # https://documentation.dnanexus.com/developer/api/search
@@ -50,7 +52,7 @@ module DX
           next_page = dx_response.body.fetch('next')
           results   = dx_response.body.fetch('results')
 
-          block.call(results) unless block.nil?
+          block&.call(results)
 
           if next_page.nil?
             results
@@ -89,7 +91,7 @@ module DX
           next_page = dx_response.body.fetch('next')
           results = dx_response.body.fetch('results')
 
-          block.call(results) unless block.nil?
+          block&.call(results)
 
           if next_page.nil?
             results

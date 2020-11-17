@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dx/api/file'
 require 'dx/api/project'
 require 'dx/api/request'
@@ -8,7 +10,7 @@ require 'dx/api/version'
 
 module DX
   module Api
-    HOST_NAME = 'https://api.dnanexus.com'.freeze
+    HOST_NAME = 'https://api.dnanexus.com'
 
     class Error < StandardError; end
   end
