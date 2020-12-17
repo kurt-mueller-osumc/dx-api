@@ -29,3 +29,5 @@ jobs:
       run: bundle install
     - name: Run tests
       run: bundle exec rake
+    - name: Run bundler-audit
+      run: bundler-audit
