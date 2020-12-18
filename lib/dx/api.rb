@@ -4,6 +4,7 @@ require 'dx/api/file'
 require 'dx/api/project'
 require 'dx/api/request'
 require 'dx/api/response'
+require 'dx/api/response/described_project'
 require 'dx/api/search'
 require 'dx/api/data_objects'
 require 'dx/api/version'
@@ -16,19 +17,19 @@ module DX
 
     # Thrown when a dnanexus token could not be used to authenticate against the
     # dnanexus api
-    class InvalidAuthenticationError < StandardError
+    class InvalidAuthenticationError < Error
       def initialize(msg = 'The provided token could not be found')
         super
       end
     end
 
-    class ResourceNotFoundError < StandardError
+    class ResourceNotFoundError < Error
       def initialize(msg = 'The specified URL could not be found')
         super
       end
     end
 
-    class PermissionDeniedError < StandardError; end
+    class PermissionDeniedError < Error; end
 
     class ErrorHandler
       attr_reader :type, :message, :code

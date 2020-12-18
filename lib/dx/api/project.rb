@@ -15,7 +15,7 @@ module DX
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
-      # @return [DX::Api::Response] A response object that contains the response code and json-parsed body
+      # @return [DX::Api::Response::DescribedProject] The described project
       # @raise [ResourceNotFoundError] if project specified by the id does not exist
       # @raise [InvalidAuthenticationError] if the supplied token could not authenticate againstthe dnanexus api
       def self.describe(api_token:, project_id:)
@@ -23,6 +23,7 @@ module DX
           api_token: api_token,
           path: [project_id, 'describe'].join('/')
         ).make.then(&DX::Api::Response.method(:from_http))
+              .then(&DX::Api::Response::DescribedProject.method(:from_response))
       end
 
       # Create a new project
