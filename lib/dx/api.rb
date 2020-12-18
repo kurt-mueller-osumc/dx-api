@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'dx/api/file'
-require 'dx/api/project'
 require 'dx/api/request'
 require 'dx/api/response'
-require 'dx/api/response/described_project'
+require 'dx/api/project'
+require 'dx/api/project/description'
 require 'dx/api/search'
 require 'dx/api/data_objects'
 require 'dx/api/version'
@@ -15,23 +15,31 @@ module DX
 
     class Error < StandardError; end
 
-    # Thrown when a dnanexus token could not be used to authenticate against the
-    # dnanexus api
-    class InvalidAuthenticationError < Error
-      def initialize(msg = 'The provided token could not be found')
-        super
-      end
-    end
+    class InvalidAuthenticationError < Error; end
 
-    class ResourceNotFoundError < Error
-      def initialize(msg = 'The specified URL could not be found')
-        super
-      end
-    end
+    class InvalidInputError < Error; end
+
+    class InvalidStateError < Error; end
+
+    class InvalidTypeError < Error; end
 
     class PermissionDeniedError < Error; end
 
+    class ResourceNotFoundError < Error; end
+
+    class SpendingLimitExceededError < Error; end
+
+    # Handles erros when the response body contains the "error" key
     class ErrorHandler
+      def self.from_response(resp)
+        error = resp.body.fetch('error')
+        code = resp.code
+
+        new(type: error.fetch('type'),
+            message: error.fetch('message'),
+            code: code)
+      end
+
       attr_reader :type, :message, :code
 
       def initialize(type:, message:, code:)
@@ -40,19 +48,21 @@ module DX
         @code = code
       end
 
-      def error_type
+      def error
         case type
         when 'InvalidAuthentication' then InvalidAuthenticationError
-        when 'ResourceNotFound'      then ResourceNotFoundError
+        when 'InvalidInput'          then InvalidInputError
+        when 'InvalidState'          then InvalidStateError
+        when 'InvalidType'           then InvalidTypeError
         when 'PermissionDenied'      then PermissionDeniedError
+        when 'ResourceNotFound'      then ResourceNotFoundError
+        when 'SpendingLimitExceeded' then SpendingLimitExceededError
         else Error # catch all for any errors not defined yet
         end
       end
 
       def raise!
-        return if error_type.nil?
-
-        raise error_type, message
+        raise error, message
       end
     end
   end

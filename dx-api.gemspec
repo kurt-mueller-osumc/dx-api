@@ -29,11 +29,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'bundler-audit'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-packaging'
   spec.add_development_dependency 'rubocop-performance'
   spec.add_development_dependency 'rubocop-require_tools'
   spec.add_development_dependency 'rubocop-rspec'
-  spec.add_development_dependency 'bundler-audit'
 end

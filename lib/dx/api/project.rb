@@ -18,12 +18,13 @@ module DX
       # @return [DX::Api::Response::DescribedProject] The described project
       # @raise [ResourceNotFoundError] if project specified by the id does not exist
       # @raise [InvalidAuthenticationError] if the supplied token could not authenticate againstthe dnanexus api
+      # InvalidInput
       def self.describe(api_token:, project_id:)
         DX::Api::Request.new(
           api_token: api_token,
           path: [project_id, 'describe'].join('/')
         ).make.then(&DX::Api::Response.method(:from_http))
-              .then(&DX::Api::Response::DescribedProject.method(:from_response))
+              .then(&DX::Api::Project::Description.method(:from_response))
       end
 
       # Create a new project
@@ -39,7 +40,11 @@ module DX
       # @param name [String] The project name
       # @param summary [String] The project summary
       # @param bill_to [String] The entity id which any costs associated with this project will be billed
-      # @return [DX::Api::Response] A response object whose body will contain the project's id.
+      # @return [String] The id of the newly created project
+      # @raise [InvalidInputError] if project name is empty or invalid
+      # @raise [InvalidStateError] if contains phi is true but project is not in a supported region
+      # @raise [SpendingLimitExceededError] if the backing org has reached its spending limit
+      # @raise [PermissionDeniedError] if permission is denied
       def self.create(api_token:, name:, summary:, bill_to:)
         DX::Api::Request.new(
           api_token: api_token,
@@ -51,6 +56,7 @@ module DX
             billTo: bill_to
           }
         ).make.then(&DX::Api::Response.method(:from_http))
+              .then { |resp| resp.body.fetch('id') }
       end
 
       # Invites a DNAnexus user or org to the project at the specified permission level. An email address
@@ -87,37 +93,85 @@ module DX
         ).make.then(&DX::Api::Response.method(:from_http))
       end
 
-      # Clones one or more objects and/or folders from a source project into a destination project (and optionally into a destination folder).
+      # Clones one or more objects and/or folders from a source project into
+      # a destination project (and optionally into a destination folder).
       #
       # https://documentation.dnanexus.com/developer/api/data-containers/cloning#api-method-class-xxxx-clone
       #
-      #    DX::Api::Project.clone(
-      #      api_token: 'api_token',
-      #      source_id: 'project-1234',
-      #      destination_id: 'project-5678'
-      #    )
-      #    => #<DX::Api::Response:0x00007fcef41ca898 @body={"id"=>"project-1234", "project"=>"project-5678", "exists"=>[]}, @code=200>
-      #
       # @param api_token [String] Your DNAnexus api token
-      # @param source_id [String] The id of the source project to copy from
-      # @param destination_id [String] The id of the destination project to copy to
-      # @param source_folders [Array<String>] The source folders to copy
-      # @param destination_folder [String] The destination folder
-      # @param create_folders [Boolean] Whether the destination folder and/or parent folders should be created if they don't exist
-      # @return [DX::Api::Response] A response object whose body, if the operation is successful, will contain the source, destination project id, and a list of object IDs that could not be cloned because they already exist in the destination project.
-      def self.clone(api_token:, source_id:, destination_id:, source_folders: %w[/], destination_folder: '/', create_folders: true)
-        path = [source_id, 'clone'].join('/')
+      # @param source [DX::Api::Project::Source] The source project to copy from
+      # @param destination [DX::Api::Project::Destination] The destination project to copy to
+      # @return [DX::Api::Project::Clone] Info about the cloned project
+      def self.clone(api_token:, source:, destination:)
+        path = [source.id, 'clone'].join('/')
 
         DX::Api::Request.new(
           api_token: api_token,
           path: path,
           body: {
-            folders: source_folders,
-            project: destination_id,
-            destination: destination_folder,
-            parents: create_folders
+            folders: source.folders,
+            project: destination.id,
+            destination: destination.folder,
+            parents: destination.create_folders
           }
         ).make.then(&DX::Api::Response.method(:from_http))
+              .then(&Clone.method(:from_response))
+      end
+
+      class Source
+        attr_reader :id, :folders
+
+        # Initializes a source project to clone from.
+        #
+        # @param id [String] The id of the source project to copy from
+        # @param folders [Array<String>] The source folders to copy
+        def initialize(id:, folders: %w[/])
+          @id = id
+          @folders = folders
+        end
+      end
+
+      class Destination
+        attr_reader :id, :folder, :create
+
+        # Initializes a destination project to clone to
+        #
+        # @param id [String] The id of the destination project to copy to
+        # @param folder [String] The destination folder
+        # @param create_folders [Boolean] If the destination and/or parent folders should be created if they don't exist
+        def initialize(id:, folder: '/', create_folders: true)
+          @id = id
+          @folder = folder
+          @create_folders = create_folders
+        end
+      end
+
+      class Clone
+        def self.from_response(resp)
+          body = resp.body
+
+          new(
+            source_id: body.fetch('id'),
+            destination_id: body.fetch('project'),
+            existing_object_ids: body.fetch('exists')
+          )
+        end
+
+        attr_reader :source_id, :destination_id, :existing_object_ids
+
+        # A value object that represents that process of cloning from a source project into a
+        # destination project.
+        #
+        # https://documentation.dnanexus.com/developer/api/data-containers/cloning
+        #
+        # @param source_id [String] The source project id
+        # @param destination_id [String] The destination project id
+        # @param existing_object_ids [Array<String>] Uncloned object IDs that already exist in the destination project
+        def initialize(source_id:, destination_id:, existing_object_ids:)
+          @source_id = source_id
+          @destination_id = destination_id
+          @existing_object_ids = existing_object_ids
+        end
       end
     end
   end

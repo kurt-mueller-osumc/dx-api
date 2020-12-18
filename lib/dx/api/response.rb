@@ -16,14 +16,7 @@ module DX
         @code = code.to_i
         @body = body.is_a?(String) ? JSON.parse(body) : body
 
-        if @body.key?('error')
-          error = @body.fetch('error')
-          ErrorHandler.new(
-            type: error.fetch('type'),
-            message: error.fetch('message'),
-            code: code
-          ).raise!
-        end
+        ::DX::Api::ErrorHandler.from_response(self).raise! if @body.key?('error')
       end
 
       def to_h
