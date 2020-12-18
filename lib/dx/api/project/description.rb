@@ -1,17 +1,14 @@
 require 'forwardable'
 
-class DX::Api::Response::DescribedProject
+# A description of a DNAnexus project
+class DX::Api::Project::Description
   extend Forwardable
 
+  # Initialize a project description from a DX API response
   def self.from_response(resp)
     body = resp.body
 
-    flags = Flags.new(
-      download_restricted: body.fetch('downloadRestricted'),
-      contains_phi: body.fetch('containsPHI'),
-      restricted: body.fetch('restricted'),
-      is_protected: body.fetch('protected'),
-    )
+    flags = Flags.from_response(resp)
 
     new(
       id: body.fetch('id'),
@@ -48,7 +45,22 @@ class DX::Api::Response::DescribedProject
   # Delegate flag methods (download_restricted, contains_phi, etc) to Flags object
   def_delegators :flags, :download_restricted, :contains_phi, :is_protected, :restricted
 
+  # Helper class that represents a project's access flags
   class Flags
+    # Initialize a Flags object from a DX API response
+    #
+    # @param resp [DX:Api::Respone] A response object from a project describe request
+    def self.from_response(resp)
+      body = resp.body
+
+      new(
+        download_restricted: body.fetch('downloadRestricted'),
+        contains_phi: body.fetch('containsPHI'),
+        restricted: body.fetch('restricted'),
+        is_protected: body.fetch('protected')
+      )
+    end
+
     attr_reader :download_restricted, :contains_phi, :is_protected, :restricted
 
     def initialize download_restricted:, contains_phi:, is_protected:, restricted:
