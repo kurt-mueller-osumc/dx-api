@@ -160,7 +160,7 @@ module DX
         #
         # @param source_id [String] The source project id
         # @param destination_id [String] The destination project id
-        # @param existing_object_ids [Array<String>] List of object IDs that could not be cloned because they already exist in the destination project
+        # @param existing_object_ids [Array<String>] Uncloned object IDs that already exist in the destination project
         def initialize source_id:, destination_id:, existing_object_ids:
           @source_id = source_id
           @destination_id = destination_id
