@@ -54,7 +54,7 @@ class DX::Api::Response::DescribedProject
     def initialize download_restricted:, contains_phi:, is_protected:, restricted:
       @download_restricted = download_restricted
       @contains_phi = contains_phi
-      @protected = is_protected
+      @is_protected = is_protected
       @restricted = restricted
     end
   end
