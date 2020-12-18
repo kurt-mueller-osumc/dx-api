@@ -15,22 +15,19 @@ module DX
 
     class Error < StandardError; end
 
-    # Thrown when a dnanexus token could not be used to authenticate against the
-    # dnanexus api
-    class InvalidAuthenticationError < Error
-      def initialize(msg = 'The provided token could not be found')
-        super
-      end
-    end
+    class InvalidAuthenticationError < Error; end
 
-    # Thrown when a resource is not found
-    class ResourceNotFoundError < Error
-      def initialize(msg = 'The specified URL could not be found')
-        super
-      end
-    end
+    class InvalidInputError < Error; end
+
+    class InvalidStateError < Error; end
+
+    class InvalidTypeError < Error; end
 
     class PermissionDeniedError < Error; end
+
+    class ResourceNotFoundError < Error; end
+
+    class SpendingLimitExceededError < Error; end
 
     # Handles erros when the response body contains the "error" key
     class ErrorHandler
@@ -42,17 +39,21 @@ module DX
         @code = code
       end
 
-      def error_type
+      def error
         case type
         when 'InvalidAuthentication' then InvalidAuthenticationError
-        when 'ResourceNotFound'      then ResourceNotFoundError
+        when 'InvalidInput'          then InvalidInputError
+        when 'InvalidState'          then InvalidStateError
+        when 'InvalidType'           then InvalidTypeError
         when 'PermissionDenied'      then PermissionDeniedError
+        when 'ResourceNotFound'      then ResourceNotFoundError
+        when 'SpendingLimitExceeded' then SpendingLimitExceededError
         else Error # catch all for any errors not defined yet
         end
       end
 
       def raise!
-        raise error_type, message
+        raise error, message
       end
     end
   end
