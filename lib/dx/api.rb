@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'dx/api/file'
-require 'dx/api/project'
 require 'dx/api/request'
 require 'dx/api/response'
-require 'dx/api/response/described_project'
+require 'dx/api/project'
+require 'dx/api/project/description'
 require 'dx/api/search'
 require 'dx/api/data_objects'
 require 'dx/api/version'
@@ -23,6 +23,7 @@ module DX
       end
     end
 
+    # Thrown when a resource is not found
     class ResourceNotFoundError < Error
       def initialize(msg = 'The specified URL could not be found')
         super
@@ -31,6 +32,7 @@ module DX
 
     class PermissionDeniedError < Error; end
 
+    # Handles erros when the response body contains the "error" key
     class ErrorHandler
       attr_reader :type, :message, :code
 
@@ -50,8 +52,6 @@ module DX
       end
 
       def raise!
-        return if error_type.nil?
-
         raise error_type, message
       end
     end
