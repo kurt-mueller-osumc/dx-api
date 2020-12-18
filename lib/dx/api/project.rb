@@ -18,12 +18,13 @@ module DX
       # @return [DX::Api::Response::DescribedProject] The described project
       # @raise [ResourceNotFoundError] if project specified by the id does not exist
       # @raise [InvalidAuthenticationError] if the supplied token could not authenticate againstthe dnanexus api
+      # InvalidInput
       def self.describe(api_token:, project_id:)
         DX::Api::Request.new(
           api_token: api_token,
           path: [project_id, 'describe'].join('/')
         ).make.then(&DX::Api::Response.method(:from_http))
-                        .then(&DX::Api::Project::Description.method(:from_response))
+              .then(&DX::Api::Project::Description.method(:from_response))
       end
 
       # Create a new project
@@ -39,7 +40,11 @@ module DX
       # @param name [String] The project name
       # @param summary [String] The project summary
       # @param bill_to [String] The entity id which any costs associated with this project will be billed
-      # @return [DX::Api::Response] A response object whose body will contain the project's id.
+      # @return [String] The id of the newly created project
+      # @raise [InvalidInputError] if project name is empty or invalid
+      # @raise [InvalidStateError] if contains phi is true but project is not in a supported region
+      # @raise [SpendingLimitExceededError] if the backing org has reached its spending limit
+      # @raise [PermissionDeniedError] if permission is denied
       def self.create(api_token:, name:, summary:, bill_to:)
         DX::Api::Request.new(
           api_token: api_token,
@@ -51,6 +56,7 @@ module DX
             billTo: bill_to
           }
         ).make.then(&DX::Api::Response.method(:from_http))
+              .then { |resp| resp.body.fetch('id') }
       end
 
       # Invites a DNAnexus user or org to the project at the specified permission level. An email address
@@ -109,7 +115,7 @@ module DX
             parents: destination.create_folders
           }
         ).make.then(&DX::Api::Response.method(:from_http))
-                        .then(&Clone.method(:from_response))
+              .then(&Clone.method(:from_response))
       end
 
       class Source
