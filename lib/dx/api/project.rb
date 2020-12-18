@@ -23,7 +23,7 @@ module DX
           api_token: api_token,
           path: [project_id, 'describe'].join('/')
         ).make.then(&DX::Api::Response.method(:from_http))
-              .then(&DX::Api::Project::Description.method(:from_response))
+                        .then(&DX::Api::Project::Description.method(:from_response))
       end
 
       # Create a new project
@@ -109,7 +109,7 @@ module DX
             parents: destination.create_folders
           }
         ).make.then(&DX::Api::Response.method(:from_http))
-              .then(&Clone.method(:from_response))
+                        .then(&Clone.method(:from_response))
       end
 
       class Source
@@ -119,7 +119,7 @@ module DX
         #
         # @param id [String] The id of the source project to copy from
         # @param folders [Array<String>] The source folders to copy
-        def initialize id:, folders: %w[/]
+        def initialize(id:, folders: %w[/])
           @id = id
           @folders = folders
         end
@@ -133,7 +133,7 @@ module DX
         # @param id [String] The id of the destination project to copy to
         # @param folder [String] The destination folder
         # @param create_folders [Boolean] If the destination and/or parent folders should be created if they don't exist
-        def initialize id:, folder: '/', create_folders: true
+        def initialize(id:, folder: '/', create_folders: true)
           @id = id
           @folder = folder
           @create_folders = create_folders
@@ -161,7 +161,7 @@ module DX
         # @param source_id [String] The source project id
         # @param destination_id [String] The destination project id
         # @param existing_object_ids [Array<String>] Uncloned object IDs that already exist in the destination project
-        def initialize source_id:, destination_id:, existing_object_ids:
+        def initialize(source_id:, destination_id:, existing_object_ids:)
           @source_id = source_id
           @destination_id = destination_id
           @existing_object_ids = existing_object_ids
