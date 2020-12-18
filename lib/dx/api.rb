@@ -44,6 +44,7 @@ module DX
         when 'InvalidAuthentication' then InvalidAuthenticationError
         when 'ResourceNotFound'      then ResourceNotFoundError
         when 'PermissionDenied'      then PermissionDeniedError
+        else Error # catch all for any errors not defined yet
         end
       end
 
