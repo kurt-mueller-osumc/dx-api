@@ -31,6 +31,15 @@ module DX
 
     # Handles erros when the response body contains the "error" key
     class ErrorHandler
+      def self.from_response(resp)
+        error = resp.body.fetch('error')
+        code = resp.code
+
+        new(type: error.fetch('type'),
+            message: error.fetch('message'),
+            code: code)
+      end
+
       attr_reader :type, :message, :code
 
       def initialize(type:, message:, code:)
