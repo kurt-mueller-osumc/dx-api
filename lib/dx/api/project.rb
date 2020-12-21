@@ -132,7 +132,7 @@ module DX
       end
 
       class Destination
-        attr_reader :id, :folder, :create
+        attr_reader :id, :folder, :create_folders
 
         # Initializes a destination project to clone to
         #
