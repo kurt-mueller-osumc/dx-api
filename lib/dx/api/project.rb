@@ -130,6 +130,55 @@ module DX
               .then(&Clone.method(:from_response))
       end
 
+      def self.find_files(api_token:, project_id:, starting_at: nil)
+        query = ::DX::Api::ProjectFile::Query.new(project_id: project_id, starting_at: starting_at)
+
+        DX::Api::Request.new(
+          api_token: api_token,
+          path: %w[system findDataObjects].join('/'),
+          body: query.to_h
+        ).make
+          .then(&::DX::Api::Response.method(:from_http))
+          .then(&::DX::Api::ProjectFile::SearchResult.method(:from_resp))
+      end
+
+      # Searches for all files within a project. If the respone indicates another
+      # page exists, it queries for the next page of files. Project fileresults are
+      # yielded to a block, if present.
+      #
+      #    DX::Api::Project.find_all_files(
+      #      api_token: YOUR_API_TOKEN,
+      #      project_id: "project-1234"
+      #    ) do |project_files|
+      #      pp project_files
+      #    end
+      #
+      # @param api_token [String] Your DNAnexus api token
+      # @param project_id [String] The full id of the project
+      # @param starting_at [String/NilClass] The file id to start at (optional)
+      # @return [Array<DX::Api::ProjectFile::Description>] Descriptions of all project files.
+      def self.find_all_files(api_token:, project_id:, starting_at: nil, &block)
+        search_result = find_files(api_token: api_token, project_id: project_id, starting_at: starting_at)
+
+        project_files = search_result.project_files
+
+        block&.call(project_files)
+
+        if search_result.no_more_files?
+          project_files
+        else
+          next_file_id = search_result.next_file_id
+
+          project_files.concat(
+            find_all_files(
+              api_token: api_token,
+              project_id: project_id,
+              starting_at: next_file_id, &block
+            )
+          )
+        end
+      end
+
       class Source
         attr_reader :id, :folders
 
