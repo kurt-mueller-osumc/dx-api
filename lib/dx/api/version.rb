@@ -2,6 +2,6 @@
 
 module DX
   module Api
-    VERSION = '0.12.0'
+    VERSION = '0.12.1'
   end
 end
