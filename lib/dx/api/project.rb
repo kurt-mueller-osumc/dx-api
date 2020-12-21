@@ -71,6 +71,9 @@ module DX
       # @param invitation [DX::Project::Invitation] A project invitation with the invitee's email/dnanexus id,
       #                                             permission level, email notification preference
       # @return [DX::Api::Project::InvitationReply] A reply that contains the invite id and the state of the invite
+      # @raise [DX::Api::ResourceNotFoundError] if invitee is not a valid email address nor an DNAnexus user/org
+      # @raise [DX::Api::InvalidInputError] if level is not provided OR level is not a valid permission level string
+      # @raise [DX::Api::PermissionDeniedError] if caller doesn't have admin access to project
       def self.invite(api_token:, id:, invitation:)
         path = [id, 'invite'].join('/')
 
