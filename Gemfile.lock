@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dx-api (0.10.3)
+    dx-api (0.11.0)
 
 GEM
   remote: https://rubygems.org/

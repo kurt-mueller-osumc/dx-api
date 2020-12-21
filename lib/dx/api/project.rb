@@ -66,31 +66,40 @@ module DX
       #
       # https://documentation.dnanexus.com/developer/api/data-containers/project-permissions-and-sharing#api-method-project-xxxx-invite
       #
-      #    DX::Api::Project.invite(
-      #      api_token: 'api_token',
-      #      id: 'project-1234',
-      #      invitee: 'arthur.james@osumc.edu',
-      #      level: 'VIEWER'
-      #    )
-      #
       # @param api_token [String] Your DNAnexus api token
       # @param id [String] The project id
-      # @param invitee [String] An email address of a current DNAnexus user or a DNAnexus id
-      # @param level [String] A permission level; must be one of "VIEW", "UPLOAD", "CONTRIBUTE", or "ADMINISTER"
-      # @param send_email_notification [Boolean] If true, send an email notification to the invitee
-      # @return [DX::Api::Response] A response object whose body will contain the invitation status
-      def self.invite(api_token:, id:, invitee:, level:, send_email_notification: true)
+      # @param invitation [DX::Project::Invitation] A project invitation with the invitee's email/dnanexus id,
+      #                                             permission level, email notification preference
+      # @return [DX::Api::Project::InvitationReply] A reply that contains the invite id and the state of the invite
+      def self.invite(api_token:, id:, invitation:)
         path = [id, 'invite'].join('/')
 
         DX::Api::Request.new(
           api_token: api_token,
           path: path,
           body: {
-            invitee: invitee,
-            level: level,
-            suppressEmailNotification: !send_email_notification
+            invitee: invitation.invitee,
+            level: inviation.level,
+            suppressEmailNotification: !invitation.send_email
           }
         ).make.then(&DX::Api::Response.method(:from_http))
+              .then(&InvitationReply.method(:from_resp))
+      end
+
+      class InvitationReply
+        def self.from_response(resp)
+          new(
+            id: resp.body.fetch('id'),
+            state: resp.body.fetch('state')
+          )
+        end
+
+        attr_reader :id, :state
+
+        def initialize(id:, state:)
+          @id = id
+          @state = state
+        end
       end
 
       # Clones one or more objects and/or folders from a source project into
