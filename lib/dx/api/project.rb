@@ -91,7 +91,7 @@ module DX
 
       # A response to an invitation to a project
       class InvitationReply
-        def self.from_response(resp)
+        def self.from_resp(resp)
           body = resp.body
           new(
             id: body.fetch('id'),
