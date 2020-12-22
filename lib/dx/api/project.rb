@@ -89,11 +89,13 @@ module DX
               .then(&InvitationReply.method(:from_resp))
       end
 
+      # A response to an invitation to a project
       class InvitationReply
         def self.from_response(resp)
+          body = resp.body
           new(
-            id: resp.body.fetch('id'),
-            state: resp.body.fetch('state')
+            id: body.fetch('id'),
+            state: body.fetch('state')
           )
         end
 
@@ -116,19 +118,16 @@ module DX
       # @return [DX::Api::Project::Clone] Info about the cloned project
       def self.clone(api_token:, source:, destination:)
         path = [source.id, 'clone'].join('/')
+        body = CloneRequestBody.new(source, destination)
 
         DX::Api::Request.new(
           api_token: api_token,
           path: path,
-          body: {
-            folders: source.folders,
-            project: destination.id,
-            destination: destination.folder,
-            parents: destination.create_folders
-          }
+          body: body.to_h.merge({parents: true})
         ).make.then(&DX::Api::Response.method(:from_http))
               .then(&Clone.method(:from_response))
       end
+
 
       def self.find_files(api_token:, project_id:, starting_at: nil)
         query = ::DX::Api::ProjectFile::Query.new(project_id: project_id, starting_at: starting_at)
@@ -179,31 +178,57 @@ module DX
         end
       end
 
+      # The source object to clone from
       class Source
-        attr_reader :id, :folders
+        attr_reader :id, :folders, :object_ids
 
         # Initializes a source project to clone from.
         #
         # @param id [String] The id of the source project to copy from
         # @param folders [Array<String>] The source folders to copy
-        def initialize(id:, folders: %w[/])
+        # @param object_ids [Array<String>] Object ids to compy from the project
+        def initialize(id:, folders: %w[/], object_ids: [])
           @id = id
           @folders = folders
+          @object_ids = object_ids
+        end
+
+        def has_folders?
+          folders.reject { |folder| folder == '/' }.any?
+        end
+
+        def has_object_ids?
+          object_ids.any?
         end
       end
 
+      # The destination object copy to
       class Destination
-        attr_reader :id, :folder, :create_folders
+        attr_reader :id, :folder
 
         # Initializes a destination project to clone to
         #
         # @param id [String] The id of the destination project to copy to
         # @param folder [String] The destination folder
-        # @param create_folders [Boolean] If the destination and/or parent folders should be created if they don't exist
-        def initialize(id:, folder: '/', create_folders: true)
+        def initialize(id:, folder: '/')
           @id = id
           @folder = folder
-          @create_folders = create_folders
+        end
+
+        def root_folder?
+          folder == '/'
+        end
+      end
+
+      # Helper methods to create a request body from a source and destination
+      CloneRequestBody = Struct.new(:source, :destination) do
+        def to_h
+          {}.tap do |body|
+            body[:objects] = source.object_ids if source.has_object_ids?
+            body[:folders] = source.folders if source.has_folders?
+            body[:project] = destination.id
+            body[:destination] = destination.folder unless destination.root_folder?
+          end
         end
       end
 
