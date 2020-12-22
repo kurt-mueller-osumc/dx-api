@@ -82,7 +82,7 @@ module DX
           path: path,
           body: {
             invitee: invitation.invitee,
-            level: inviation.level,
+            level: invitation.level,
             suppressEmailNotification: !invitation.send_email
           }
         ).make.then(&DX::Api::Response.method(:from_http))
