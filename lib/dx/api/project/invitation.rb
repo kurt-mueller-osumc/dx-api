@@ -45,6 +45,18 @@ module DX
           @level = level
           @send_email = send_email
         end
+
+        def admin?
+          level == PERMISSIONS.fetch(:administrator)
+        end
+
+        def viewer?
+          level == PERMISSIONS.fetch(:viewer)
+        end
+
+        def contributor?
+          level == PERMISSIONS.fetch(:contributor)
+        end
       end
     end
   end
