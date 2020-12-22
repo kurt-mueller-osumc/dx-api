@@ -30,7 +30,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler-audit'
+  spec.add_development_dependency 'factory_bot'
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'reek'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-packaging'
   spec.add_development_dependency 'rubocop-performance'
