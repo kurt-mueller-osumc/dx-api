@@ -2,26 +2,20 @@ RSpec.describe DX::Api::Project::Invitation do
   subject(:invitation) { described_class }
 
   describe '.as_admin' do
-    describe '#level' do
-      subject { invitation.as_admin(invitee: 'user-james.solove').level }
+    subject { invitation.as_admin(invitee: 'user-james.solove') }
 
-      it { is_expected.to eq 'ADMINISTER' }
-    end
+    it { is_expected.to be_admin  }
   end
 
   describe '.as_contributor' do
-    describe '#level' do
-      subject { invitation.as_contributor(invitee: 'user-james.solove').level }
+    subject { invitation.as_contributor(invitee: 'user-james.solove') }
 
-      it { is_expected.to eq 'CONTRIBUTE' }
-    end
+    it { is_expected.to be_contributor }
   end
 
   describe '.as_viewer' do
-    describe '#level' do
-      subject { invitation.as_viewer(invitee: 'user-james.solove').level }
+    subject { invitation.as_viewer(invitee: 'user-james.solove') }
 
-      it { is_expected.to eq 'VIEW' }
-    end
+    it { is_expected.to be_viewer }
   end
 end
