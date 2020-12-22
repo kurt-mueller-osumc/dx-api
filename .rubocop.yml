@@ -10,3 +10,11 @@ AllCops:
 Layout/FirstHashElementIndentation:
   Exclude:
     - 'lib/dx/api/search.rb'
+
+Require/MissingRequireStatement:
+  Exclude:
+    - 'lib/dx/api/project.rb'
+
+Performance/MethodObjectAsBlock:
+  Exclude:
+    - 'lib/dx/api/project.rb'
