@@ -129,8 +129,24 @@ module DX
       end
 
 
-      def self.find_files(api_token:, project_id:, starting_at: nil)
-        query = ::DX::Api::ProjectFile::Query.new(project_id: project_id, starting_at: starting_at)
+      # Searches for files within a project and, if specified, a specific folder, file names that match
+      # a search phrase, and/or starting at a specific DNAnexus object id.
+      #
+      # https://documentation.dnanexus.com/developer/api/search#api-method-system-finddataobjects
+      #
+      # @param api_token [String] Your DNAnexus api token
+      # @param project_id [String] The full id of the project
+      # @param folder [String] The project folder to search in.
+      # @parm with_name [String] A regular expression that any results must adhere to.
+      # @param starting_at [String/NilClass] The file id to start at (optional)
+      # @return [Array<DX::Api::ProjectFile::Description>] Descriptions of all project files.
+      def self.find_files(api_token:, project_id:, folder: '/', with_name: nil, starting_at: nil)
+        query = ::DX::Api::ProjectFile::Query.new(
+          project_id: project_id,
+          folder: folder,
+          with_name: with_name,
+          starting_at: starting_at
+        )
 
         DX::Api::Request.new(
           api_token: api_token,
@@ -141,9 +157,11 @@ module DX
           .then(&::DX::Api::ProjectFile::SearchResult.method(:from_resp))
       end
 
-      # Searches for all files within a project. If the respone indicates another
-      # page exists, it queries for the next page of files. Project fileresults are
-      # yielded to a block, if present.
+      # Searches for all files within a project, recursively. If the response indicates another
+      # page exists, it queries for the next page of files. Search results are yielded to a block,
+      # if present.
+      #
+      # https://documentation.dnanexus.com/developer/api/search#api-method-system-finddataobjects
       #
       #    DX::Api::Project.find_all_files(
       #      api_token: YOUR_API_TOKEN,
@@ -154,10 +172,18 @@ module DX
       #
       # @param api_token [String] Your DNAnexus api token
       # @param project_id [String] The full id of the project
+      # @param folder [String] The project folder to search in.
+      # @parm with_name [String] A regular expression that any results must adhere to.
       # @param starting_at [String/NilClass] The file id to start at (optional)
       # @return [Array<DX::Api::ProjectFile::Description>] Descriptions of all project files.
-      def self.find_all_files(api_token:, project_id:, starting_at: nil, &block)
-        search_result = find_files(api_token: api_token, project_id: project_id, starting_at: starting_at)
+      def self.find_all_files(api_token:, project_id:, folder: '/', with_name: nil, starting_at: nil, &block)
+        search_result = find_files(
+          api_token: api_token,
+          project_id: project_id,
+          folder: folder,
+          with_name: with_name,
+          starting_at: starting_at
+        )
 
         project_files = search_result.project_files
 
